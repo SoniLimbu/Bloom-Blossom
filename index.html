@@ -1,39 +1,477 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║         FLOWER SHOP — E-COMMERCE WEBSITE                 ║
+  ║  File     : index.html  (Structure / Content)            ║
+  ║  Style    : styles.css  (All visual design)              ║
+  ║  Logic    : script.js   (Cart, filters, interactions)    ║
+  ║                                                          ║
+  ║  Sections:                                               ║
+  ║   1. <head>   — meta, fonts, CSS link                    ║
+  ║   2. Cart Overlay + Sidebar                              ║
+  ║   3. Toast Notification                                  ║
+  ║   4. Navigation Bar                                      ║
+  ║   5. Hero Section                                        ║
+  ║   6. Category Section                                    ║
+  ║   7. Products Section                                    ║
+  ║   8. About Us Section                                    ║
+  ║   9. Services Section                                    ║
+  ║  10. Reviews / Testimonials                              ║
+  ║  11. Newsletter Section                                  ║
+  ║  12. Footer                                              ║
+  ║  13. <script> tag linking script.js                      ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Shop Website</title>
+  <!-- Character encoding — always UTF-8 for emoji & special chars -->
+  <meta charset="UTF-8" />
 
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- Responsive viewport — makes the page scale correctly on phones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+  <!-- Browser tab title -->
+  <title>Flower. – Fresh &amp; Beautiful</title>
+
+  <!-- ── Google Fonts ──────────────────────────────────────
+       Playfair Display → elegant serif for headings
+       Poppins          → clean sans-serif for body text
+  ─────────────────────────────────────────────────────── -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ── External Stylesheet ───────────────────────────────
+       All visual styles live in styles.css
+       Link it here in <head> so it loads before the HTML
+  ─────────────────────────────────────────────────────── -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
-    <!-- Header Section -->
+  <!-- ======================================================
+       1. CART OVERLAY
+       Semi-transparent dark backdrop shown behind the
+       cart sidebar. Clicking it closes the cart.
+  ======================================================= -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
 
-    <header>
 
-        <a href="#" class="logo">flower<span>.</span></a>
+  <!-- ======================================================
+       2. CART SIDEBAR
+       Slides in from the right when the cart icon is clicked.
+       Contains: header, scrollable item list, total + checkout.
+  ======================================================= -->
+  <div class="cart-sidebar" id="cartSidebar">
 
-        <nav class="navbar">
-            <a href="#home">home</a>
-            <a href="#about">about</a>
-            <a href="#products">products</a>
-            <a href="#review">review</a>
-            <a href="#contact">contact</a>
-        </nav>
+    <!-- Cart header: title + close button -->
+    <div class="cart-header">
+      <h3>🛒 Shopping Cart</h3>
+      <button class="close-btn" onclick="toggleCart()">✕</button>
+    </div>
 
-        <div class="icons">
-            <a href="#" class="fas fa-heart"></a>
-            <a href="#" class="fas fa-shopping-cart"></a>
-            <a href="#" class="fas fa-user"></a>
+    <!-- Cart item list — populated by updateCartUI() in script.js -->
+    <div class="cart-items" id="cartItems">
+      <!-- Default empty-state message (replaced by JS when items exist) -->
+      <div class="empty-cart">
+        <span class="empty-icon">🛍️</span>
+        Your cart is empty.<br />Start adding beautiful flowers!
+      </div>
+    </div>
+
+    <!-- Cart footer: running total + checkout button -->
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <!-- Updated dynamically by updateCartUI() -->
+        <span id="cartTotal">$0.00</span>
+      </div>
+      <button class="checkout-btn" onclick="showToast('Checkout coming soon!')">
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ======================================================
+       3. TOAST NOTIFICATION
+       A small pop-up message that slides up from the bottom.
+       Shown by showToast(msg) in script.js.
+  ======================================================= -->
+  <div class="toast" id="toast"></div>
+
+
+  <!-- ======================================================
+       4. NAVIGATION BAR
+       Sticky header with: logo | links | icon buttons | hamburger
+  ======================================================= -->
+  <nav>
+
+    <!-- Brand logo — "Flower" in dark, "." in pink -->
+    <div class="logo">Flower<span>.</span></div>
+
+    <!-- Desktop nav links (hidden on mobile, toggled by hamburger) -->
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <!-- Right-side icon buttons -->
+    <div class="nav-icons">
+      <!-- Wishlist icon -->
+      <button onclick="showToast('Wishlist coming soon!')">♡</button>
+
+      <!-- Cart icon — badge shows number of items in cart -->
+      <button onclick="toggleCart()" style="position:relative">
+        🛒
+        <!-- Badge hidden by default; shown + updated by updateCartUI() -->
+        <span class="badge" id="cartBadge" style="display:none">0</span>
+      </button>
+
+      <!-- Account icon -->
+      <button onclick="showToast('Sign in coming soon!')">👤</button>
+    </div>
+
+    <!-- Hamburger icon — only visible on mobile screens -->
+    <!-- Three <span> bars that animate into an × via CSS -->
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+  </nav><!-- end nav -->
+
+
+  <!-- ======================================================
+       5. HERO SECTION
+       Full-height landing area with:
+         - Left : headline, subtitle, description, CTA buttons
+         - Right: circular flower image + 2 floating info cards
+  ======================================================= -->
+  <section class="hero" id="hero">
+
+    <!-- ── Left: text content ── -->
+    <div class="hero-content">
+
+      <!-- Small pill label above the main headline -->
+      <div class="hero-eyebrow">🌸 Natural &amp; Handpicked</div>
+
+      <!-- Main headline (Playfair Display font) -->
+      <h1>Fresh Flowers</h1>
+
+      <!-- Pink subtitle -->
+      <h2>Natural &amp; Beautiful Flowers</h2>
+
+      <!-- Supporting description -->
+      <p>
+        Brighten someone's day with our hand-curated bouquets — sourced fresh
+        daily from local growers and crafted with care just for you.
+      </p>
+
+      <!-- CTA buttons -->
+      <div class="hero-cta">
+        <!-- Primary: scrolls to products section -->
+        <button
+          class="btn-primary"
+          onclick="document.getElementById('products').scrollIntoView({ behavior: 'smooth' })"
+        >Shop Now</button>
+
+        <!-- Secondary / outline: scrolls to about section -->
+        <button
+          class="btn-outline"
+          onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' })"
+        >Learn More</button>
+      </div>
+
+    </div><!-- end hero-content -->
+
+    <!-- ── Right: image + floating cards ── -->
+    <div class="hero-image">
+
+      <!-- Circular image frame (replace emoji with <img> for a real photo) -->
+      <div class="hero-img-wrap">
+        <div class="hero-img-placeholder">💐</div>
+      </div>
+
+      <!-- Floating badge — bottom-left of the circle, gentle bob animation -->
+      <div class="hero-badge">
+        <div class="icon">🌹</div>
+        <div class="info">
+          <strong>Fresh Daily</strong>
+          <span>Delivered to you</span>
+        </div>
+      </div>
+
+      <!-- Floating stat card — top-right of the circle -->
+      <div class="hero-stats">
+        <div class="num">500+</div>
+        <div class="lbl">Flower Types</div>
+      </div>
+
+    </div><!-- end hero-image -->
+
+  </section><!-- end hero -->
+
+
+  <!-- ======================================================
+       6. CATEGORY SECTION
+       Clickable pill cards — each calls filterProducts()
+       in script.js to show/hide products by flower type.
+  ======================================================= -->
+  <section class="categories" id="categories">
+
+    <!-- Reusable section header component -->
+    <div class="section-header">
+      <div class="tag">Browse</div>
+      <h2>Shop by Category</h2>
+      <p>Find the perfect flowers for every occasion</p>
+    </div>
+
+    <!-- Category card grid -->
+    <div class="cat-grid">
+      <!-- data-cat used by JS; "active" class on the default selection -->
+      <div class="cat-card active"  onclick="filterProducts('all',       this)"><div class="cat-icon">🌺</div><div class="cat-name">All Flowers</div></div>
+      <div class="cat-card"         onclick="filterProducts('rose',      this)"><div class="cat-icon">🌹</div><div class="cat-name">Roses</div></div>
+      <div class="cat-card"         onclick="filterProducts('tulip',     this)"><div class="cat-icon">🌷</div><div class="cat-name">Tulips</div></div>
+      <div class="cat-card"         onclick="filterProducts('sunflower', this)"><div class="cat-icon">🌻</div><div class="cat-name">Sunflowers</div></div>
+      <div class="cat-card"         onclick="filterProducts('exotic',    this)"><div class="cat-icon">🪷</div><div class="cat-name">Exotic</div></div>
+      <div class="cat-card"         onclick="filterProducts('bouquet',   this)"><div class="cat-icon">💐</div><div class="cat-name">Bouquets</div></div>
+    </div>
+
+  </section><!-- end categories -->
+
+
+  <!-- ======================================================
+       7. PRODUCTS SECTION
+       Filter pills + responsive card grid.
+       Cards are injected by renderProducts() in script.js.
+  ======================================================= -->
+  <section class="products" id="products">
+
+    <div class="section-header">
+      <div class="tag">Latest</div>
+      <h2>Featured Products</h2>
+      <p>Handpicked selections for every mood and moment</p>
+    </div>
+
+    <!-- Tag-based filter pills (All / Popular / New Arrival / Sale) -->
+    <div class="product-filters">
+      <button class="filter-btn active" onclick="setFilter('all',     this)">All</button>
+      <button class="filter-btn"        onclick="setFilter('popular', this)">Popular</button>
+      <button class="filter-btn"        onclick="setFilter('new',     this)">New Arrival</button>
+      <button class="filter-btn"        onclick="setFilter('sale',    this)">On Sale</button>
+    </div>
+
+    <!-- Product cards are injected here by renderProducts() -->
+    <div class="product-grid" id="productGrid"></div>
+
+  </section><!-- end products -->
+
+
+  <!-- ======================================================
+       8. ABOUT US SECTION
+       Two-column layout:
+         Left  — image collage (tall + 2 small images)
+         Right — tag, heading, stats, feature list, button
+  ======================================================= -->
+  <section class="about" id="about">
+    <div class="about-grid">
+
+      <!-- ── Left: image collage ── -->
+      <div class="about-images">
+        <!-- Tall image spanning 2 rows in the CSS grid -->
+        <div class="about-img tall"
+             style="background:var(--pink-pale); font-size:5rem; display:flex; align-items:center; justify-content:center; border-radius:var(--radius);">
+          🌹
+        </div>
+        <!-- Two smaller images below the tall one -->
+        <div class="about-img" style="background:#FFF3E0; font-size:3rem; display:flex; align-items:center; justify-content:center;">🌻</div>
+        <div class="about-img" style="background:#E8F5E9; font-size:3rem; display:flex; align-items:center; justify-content:center;">🌷</div>
+      </div>
+
+      <!-- ── Right: text content ── -->
+      <div class="about-text">
+        <div class="about-tag">About Us</div>
+        <h2>Why Choose Our Flowers?</h2>
+        <p>
+          We are passionate about bringing the beauty of nature to your doorstep.
+          Every bouquet is thoughtfully arranged by our expert florists using only
+          the freshest, sustainably sourced blooms.
+        </p>
+
+        <!-- Three key stats -->
+        <div class="about-stats">
+          <div class="stat-item"><div class="stat-num">12+</div><div class="stat-lbl">Years Experience</div></div>
+          <div class="stat-item"><div class="stat-num">50k</div><div class="stat-lbl">Happy Customers</div></div>
+          <div class="stat-item"><div class="stat-num">200+</div><div class="stat-lbl">Flower Varieties</div></div>
         </div>
 
-    </header>
+        <!-- Feature checklist (pink ✓ circles added via CSS ::before) -->
+        <div class="feature-list">
+          <div class="feature-item">Fresh flowers sourced from local farms daily</div>
+          <div class="feature-item">Same-day delivery available across the city</div>
+          <div class="feature-item">100% satisfaction guarantee on all orders</div>
+          <div class="feature-item">Custom arrangements for any occasion</div>
+        </div>
+
+        <button class="btn-primary">Learn More</button>
+      </div>
+
+    </div>
+  </section><!-- end about -->
+
+
+  <!-- ======================================================
+       9. SERVICES SECTION
+       Four icon cards in a responsive grid
+  ======================================================= -->
+  <section class="services">
+
+    <div class="section-header">
+      <div class="tag">Our Services</div>
+      <h2>What We Offer</h2>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🚚</div>
+        <h3>Free Delivery</h3>
+        <p>Free same-day delivery on orders over $50. We handle every bouquet with care.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🌸</div>
+        <h3>Fresh Guarantee</h3>
+        <p>All flowers are cut fresh within 24 hours. Freshness guaranteed or your money back.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">💝</div>
+        <h3>Custom Bouquets</h3>
+        <p>Design your own bouquet. Choose your flowers, colors, and we'll craft it perfectly.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🎁</div>
+        <h3>Gift Wrapping</h3>
+        <p>Complimentary premium gift wrapping with a personalized card for every order.</p>
+      </div>
+    </div>
+
+  </section><!-- end services -->
+
+
+  <!-- ======================================================
+       10. REVIEWS / TESTIMONIALS SECTION
+       Review cards injected by renderReviews() in script.js
+  ======================================================= -->
+  <section class="testimonials" id="reviews">
+
+    <div class="section-header">
+      <div class="tag">Reviews</div>
+      <h2>Customer's Review</h2>
+      <p>What our happy customers are saying about us</p>
+    </div>
+
+    <!-- Review cards injected here by renderReviews() -->
+    <div class="review-grid" id="reviewGrid"></div>
+
+  </section><!-- end testimonials -->
+
+
+  <!-- ======================================================
+       11. NEWSLETTER SECTION
+       Gradient pink banner with email subscription form
+  ======================================================= -->
+  <section class="newsletter" id="contact">
+    <h2>Get 15% Off Your First Order 🌷</h2>
+    <p>Subscribe to our newsletter and be the first to hear about new arrivals, exclusive offers, and floral inspiration.</p>
+
+    <!-- Email form — button triggers toast in script.js -->
+    <div class="newsletter-form">
+      <input type="email" placeholder="Enter your email address" />
+      <button onclick="showToast('🌸 You\'re subscribed! Check your inbox.')">
+        Subscribe
+      </button>
+    </div>
+  </section><!-- end newsletter -->
+
+
+  <!-- ======================================================
+       12. FOOTER
+       4-column grid: brand info | quick links | categories | contact
+  ======================================================= -->
+  <footer>
+    <div class="footer-grid">
+
+      <!-- Column 1 — Brand description + social icons -->
+      <div class="footer-about">
+        <div class="footer-logo">Flower<span>.</span></div>
+        <p>Bringing the beauty of fresh blooms to your home and heart. Handcrafted with love, delivered with care.</p>
+        <div class="social-links">
+          <a href="#" onclick="showToast('Facebook'); return false;">f</a>
+          <a href="#" onclick="showToast('Instagram'); return false;">📷</a>
+          <a href="#" onclick="showToast('Twitter'); return false;">𝕏</a>
+          <a href="#" onclick="showToast('Pinterest'); return false;">P</a>
+        </div>
+      </div>
+
+      <!-- Column 2 — Quick page links -->
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3 — Product categories -->
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="#">Roses</a></li>
+          <li><a href="#">Tulips</a></li>
+          <li><a href="#">Sunflowers</a></li>
+          <li><a href="#">Exotic Flowers</a></li>
+          <li><a href="#">Gift Bouquets</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4 — Contact details -->
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul>
+          <li><a href="#">📍 123 Blossom Street</a></li>
+          <li><a href="#">📞 +1 (555) 123-4567</a></li>
+          <li><a href="#">✉️ hello@flower.com</a></li>
+          <li><a href="#">🕐 Mon–Sat 8am–8pm</a></li>
+        </ul>
+      </div>
+
+    </div><!-- end footer-grid -->
+
+    <!-- Bottom bar: copyright + policy links -->
+    <div class="footer-bottom">
+      <span>© 2026 Flower. All rights reserved.</span>
+      <span><a href="#">Privacy Policy</a> · <a href="#">Terms</a></span>
+    </div>
+
+  </footer><!-- end footer -->
+
+
+  <!-- ======================================================
+       13. SCRIPT TAG
+       Load script.js at the end of <body> so all HTML
+       elements exist in the DOM before JavaScript runs.
+  ======================================================= -->
+  <script src="script.js"></script>
 
 </body>
 </html>
