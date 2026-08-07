@@ -7,12 +7,12 @@ import { FiArrowRight, FiStar } from 'react-icons/fi';
 import { MdLocalOffer } from 'react-icons/md';
 
 const categories = [
-  { name: 'Roses', emoji: '🌹', cat: 'roses' },
-  { name: 'Lilies', emoji: '🌷', cat: 'lilies' },
-  { name: 'Orchids', emoji: '🌺', cat: 'orchids' },
-  { name: 'Sunflowers', emoji: '🌻', cat: 'sunflowers' },
-  { name: 'Bouquets', emoji: '💐', cat: 'bouquets' },
-  { name: 'Hampers', emoji: '🎁', cat: 'hamper' },
+  { name: 'Roses', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/BEAUTIFUL%20RED%20ROSES.jpg?width=200', cat: 'roses' },
+  { name: 'Lilies', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pink%20Lily%20Lilium%20sp%20Flower%20Closeup%202511px.jpg?width=200', cat: 'lilies' },
+  { name: 'Orchids', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Purple%20Orchid%20Flower.jpg?width=200', cat: 'orchids' },
+  { name: 'Sunflowers', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/A%20Sunflower.jpg?width=200', cat: 'sunflowers' },
+  { name: 'Bouquets', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flower%20bouquet.jpg?width=200', cat: 'bouquets' },
+  { name: 'Hampers', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bouquet%20de%20roses%20roses.jpg?width=200', cat: 'hamper' },
 ];
 
 export default function Home() {
@@ -137,7 +137,19 @@ export default function Home() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = '#C2185B'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = '#f0d0e0'; }}
               >
-                <span style={{ fontSize: '2.5rem' }}>{c.emoji}</span>
+                <span
+                  style={{
+                    width: '64px', height: '64px', borderRadius: '50%', overflow: 'hidden',
+                    border: '2px solid white', boxShadow: '0 2px 8px rgba(194,24,91,0.2)', flexShrink: 0,
+                  }}
+                >
+                  <img
+                    src={c.img}
+                    alt={c.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={e => { e.target.src = 'https://commons.wikimedia.org/wiki/Special:FilePath/Flower%20bouquet.jpg?width=200'; }}
+                  />
+                </span>
                 <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{c.name}</span>
               </Link>
             ))}
